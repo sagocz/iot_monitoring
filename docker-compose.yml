@@ -5,6 +5,18 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    environment:
+      # PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=iot_db
+      - POSTGRES_USER=iot_user
+      - POSTGRES_PASSWORD=iot_pass
+      # DynamoDB
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+    depends_on:
+      - postgres
+      - dynamodb
     networks:
       - monitoring-net
 
@@ -16,6 +28,34 @@ services:
       - BACKEND_URL=http://backend:8000/data
     networks:
       - monitoring-net
+
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: iot_db
+      POSTGRES_USER: iot_user
+      POSTGRES_PASSWORD: iot_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - monitoring-net
+      
+  dynamodb:
+    image: amazon/dynamodb-local
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - dynamodb_data:/home/dynamodblocal/data
+    networks:
+      - monitoring-net
+
+volumes:
+  postgres_data:
+  dynamodb_data:
 
 networks:
   monitoring-net:
