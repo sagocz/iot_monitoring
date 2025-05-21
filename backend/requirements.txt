@@ -1,5 +1,4 @@
 fastapi
-uvicorn[standard]
-asyncpg
-sqlalchemy>=1.4,<2.0
-boto3
+uvicorn
+psycopg2-binary
+sqlalchemy

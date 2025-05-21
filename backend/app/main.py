@@ -1,31 +1,34 @@
+import datetime
 from fastapi import FastAPI, Depends
-from .database import AsyncSessionLocal, dynamodb_resource
-from sqlalchemy.ext.asyncio import AsyncSession
-import boto3
+from sqlalchemy.orm import Session
+from app.database import SessionLocal, engine
+from app.models import Base, SensorData
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
-
-
-@app.get("/")
-async def root():
-    return {"message": "IoT Monitoring Backend"}
-
-
-@app.get("/pg_test")
-async def test_postgres(session: AsyncSession = Depends(get_db)):
-    result = await session.execute("SELECT 1;")
-    return {"postgres_ok": result.scalar()}
-
-
-@app.get("/dynamodb_test")
-async def test_dynamodb():
+def get_db():
+    db = SessionLocal()
     try:
-        tables = list(dynamodb_resource.tables.all())
-        return {"dynamodb_ok": [t.name for t in tables]}
+        yield db
+    finally:
+        db.close()
+
+
+@app.post("/data")
+async def receive_data(data: dict, db: Session = Depends(get_db)):
+    try:
+        new_data = SensorData(
+            sensor_id=data["sensor_id"],
+            temperature=data["temperature"],
+            pressure=data["pressure"],
+            timestamp=datetime.fromisoformat(data["timestamp"])
+        )
+        db.add(new_data)
+        db.commit()
+        db.refresh(new_data)
+        return {"status": "success", "id": new_data.id}
     except Exception as e:
         return {"error": str(e)}
+

@@ -1,29 +1,25 @@
 import os
-import boto3
-import sqlalchemy
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+import time
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# --- PostgreSQL ---
-POSTGRES_USER = os.getenv("POSTGRES_USER", "iot_user")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "iot_pass")
-POSTGRES_DB = os.getenv("POSTGRES_DB", "iot_db")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
 
-DATABASE_URL = (
-    f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
-    f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-engine = create_async_engine(DATABASE_URL, echo=True)
-AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-
-# --- DynamoDB ---
-DYNAMODB_ENDPOINT = os.getenv("DYNAMODB_ENDPOINT", "http://localhost:8001")
-
-dynamodb_resource = boto3.resource(
-    "dynamodb",
-    region_name="us-west-2",
-    endpoint_url=DYNAMODB_ENDPOINT,
-)
+for i in range(10):
+    try:
+        engine = create_engine(DATABASE_URL)
+        connection = engine.connect()
+        connection.close()
+        break
+    except Exception as e:
+        print(f"[database.py] DB connection failed ({i+1}/10), retrying in 3s...")
+        time.sleep(3)
+else:
+    raise RuntimeError("Could not connect to the database after 10 attempts.")
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
