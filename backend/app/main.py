@@ -15,6 +15,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -54,8 +55,10 @@ def get_plot_data(db: Session = Depends(get_db)):
     ]
     return JSONResponse(content=result)
 
-app.mount("/static", StaticFiles(directory=DIR/"static"), name="static")
-templates = Jinja2Templates(directory=DIR/"templates")
+
+app.mount("/static", StaticFiles(directory=DIR / "static"), name="static")
+templates = Jinja2Templates(directory=DIR / "templates")
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
