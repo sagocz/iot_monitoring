@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class SensorData:
     sensor_id: int
