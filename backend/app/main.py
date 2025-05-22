@@ -33,4 +33,3 @@ async def receive_data(data: SensorDataIn, db: Session = Depends(get_db)):
         return {"status": "success", "id": new_data.id}
     except Exception as e:
         return {"error": str(e)}
-
