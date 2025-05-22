@@ -32,8 +32,8 @@ Work is developed on the `development` branch. Each completed stage will be merg
 | Stage | Description |
 |-------|-------------|
 | ✅ Stage 1 | Initial setup of sensor simulator and FastAPI backend, containerized with Docker |
-| ⏳ Stage 2 | Add database support (SQL + NoSQL) to store time-series sensor data |
-| ⏳ Stage 3 | Implement basic frontend dashboard for live data preview |
+| ✅ Stage 2 | Add database support (SQL - PostgreSQL) to store time-series sensor data. |
+| ✅ Stage 3 | Implement basic frontend dashboard for live data preview |
 | ⏳ Stage 4 | Add authentication and user roles (e.g., viewer, admin) |
 | ⏳ Stage 5 | Deploy the app to AWS using ECS / EC2 / RDS |
 | ⏳ Stage 6 | Add CI/CD (e.g., GitHub Actions) for automated testing and deployment |
