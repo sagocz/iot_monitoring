@@ -1,8 +1,10 @@
-import datetime
+from datetime import datetime
+
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+
 from app.database import SessionLocal, engine
-from app.models import Base, SensorData
+from app.models import Base, SensorData, SensorDataIn
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,13 +19,13 @@ def get_db():
 
 
 @app.post("/data")
-async def receive_data(data: dict, db: Session = Depends(get_db)):
+async def receive_data(data: SensorDataIn, db: Session = Depends(get_db)):
     try:
         new_data = SensorData(
-            sensor_id=data["sensor_id"],
-            temperature=data["temperature"],
-            pressure=data["pressure"],
-            timestamp=datetime.fromisoformat(data["timestamp"])
+            sensor_id=data.sensor_id,
+            temperature=data.temperature,
+            pressure=data.pressure,
+            timestamp=datetime.fromtimestamp(data.timestamp),
         )
         db.add(new_data)
         db.commit()
@@ -31,4 +33,3 @@ async def receive_data(data: dict, db: Session = Depends(get_db)):
         return {"status": "success", "id": new_data.id}
     except Exception as e:
         return {"error": str(e)}
-

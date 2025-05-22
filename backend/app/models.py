@@ -1,6 +1,9 @@
+from datetime import datetime
+
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+
 
 Base = declarative_base()
 
@@ -12,3 +15,9 @@ class SensorData(Base):
     temperature = Column(Float, nullable=False)
     pressure = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+class SensorDataIn(BaseModel):
+    sensor_id: int
+    timestamp: float
+    temperature: float
+    pressure: float
