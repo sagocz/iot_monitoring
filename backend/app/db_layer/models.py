@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, Float, DateTime
 
 from db_layer.base import Base
 
+
 class SensorData(Base):
     __tablename__ = "sensor_data"
 

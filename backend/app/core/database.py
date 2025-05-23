@@ -7,13 +7,12 @@ from sqlalchemy.orm import sessionmaker, Session
 from contextlib import contextmanager
 from core.config import settings
 
+
 class Database:
     def __init__(self, url: str):
         self._engine = create_engine(url, pool_pre_ping=True)
         self._SessionLocal = sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=self._engine
+            autocommit=False, autoflush=False, bind=self._engine
         )
 
     @property
@@ -41,7 +40,9 @@ class Database:
         finally:
             db.close()
 
+
 db = Database(settings.database_url)
+
 
 def get_db():
     with db.get_session() as session:

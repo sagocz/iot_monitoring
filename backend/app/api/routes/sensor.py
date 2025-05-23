@@ -7,6 +7,7 @@ from db_layer.dependencies import get_sensor_data_repository
 
 router = APIRouter()
 
+
 @router.post("/data")
 async def receive_data(
     data: SensorDataIn,
@@ -17,6 +18,7 @@ async def receive_data(
         return {"status": "success", "id": new_data.id}
     except Exception as e:
         return {"error": str(e)}
+
 
 @router.get("/plot-data")
 def get_plot_data(

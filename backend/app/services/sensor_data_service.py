@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from db_layer.repositories.sensor_data_repository import SensorDataRepository
 from db_layer.schemas.sensor_data import SensorDataIn
 
+
 class SensorDataService:
     def __init__(self, db: Session):
         self.repo = SensorDataRepository(db)
