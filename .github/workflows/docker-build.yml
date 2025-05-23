@@ -19,11 +19,11 @@ jobs:
       - name: Build backend Docker image
         run: docker build -t test-backend ./backend
 
-      - name: Build sensor Docker image
+      - name: Build sensor_simulator Docker image
         run: docker build -t test-sensor ./sensor_simulator
 
       - name: Validate docker-compose config
-        run: docker-compose config -q
+        run: docker compose config -q
 
       - name: Build docker-compose (full stack)
-        run: docker-compose build
+        run: docker compose build
