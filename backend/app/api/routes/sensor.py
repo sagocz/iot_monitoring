@@ -1,24 +1,28 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
 
-from db_layer import crud
-from db_layer.session import get_db
-from app_models.schemas import SensorDataIn
+from db_layer.schemas.sensor_data import SensorDataIn
+from db_layer.repositories.sensor_data_repository import SensorDataRepository
+from db_layer.dependencies import get_sensor_data_repository
 
 router = APIRouter()
 
 @router.post("/data")
-async def receive_data(data: SensorDataIn, db: Session = Depends(get_db)):
+async def receive_data(
+    data: SensorDataIn,
+    repo: SensorDataRepository = Depends(get_sensor_data_repository),
+):
     try:
-        new_data = crud.create_sensor_data(db, data)
+        new_data = repo.create(data)
         return {"status": "success", "id": new_data.id}
     except Exception as e:
         return {"error": str(e)}
 
 @router.get("/plot-data")
-def get_plot_data(db: Session = Depends(get_db)):
-    data = crud.get_last_sensor_data(db)
+def get_plot_data(
+    repo: SensorDataRepository = Depends(get_sensor_data_repository),
+):
+    data = repo.get_last()
     result = [
         {
             "timestamp": d.timestamp.isoformat(),

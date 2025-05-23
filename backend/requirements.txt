@@ -3,3 +3,4 @@ uvicorn
 psycopg2-binary
 sqlalchemy
 Jinja2>=3.0
+pydantic-settings
