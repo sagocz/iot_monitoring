@@ -1,0 +1,29 @@
+name: Docker Compose Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend Docker image
+        run: docker build -t test-backend ./backend
+
+      - name: Build sensor_simulator Docker image
+        run: docker build -t test-sensor ./sensor_simulator
+
+      - name: Validate docker-compose config
+        run: docker compose config -q
+
+      - name: Build docker-compose (full stack)
+        run: docker compose build
